@@ -11,7 +11,7 @@ typedef struct node_t {
     struct node_t *next;
 } Node;
 
-typedef struct LinkedList {
+typedef struct linkedList_t {
     //head and tail are phantom nodes
     Node *head;
     Node *tail;

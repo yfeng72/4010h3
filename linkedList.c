@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "LinkedList.h"
+#include "linkedList.h"
 
 Node *newNode( int value ) {
     Node *newNode = (Node *) malloc( sizeof( Node ) );
@@ -34,14 +34,14 @@ int removeFirst( LinkedList *list ) {
 }
 
 LinkedList *newList() {
-    LinkedList *LinkedList = (LinkedList*) malloc( sizeof( LinkedList ) );
-    LinkedList->head = newNode( -1 );
-    LinkedList->tail = newNode( -2 );
-    LinkedList->head->next = LinkedList->tail;
-    LinkedList->head->prev = NULL;
-    LinkedList->tail->prev = LinkedList->head;
-    LinkedList->tail->next = NULL;
-    return LinkedList;
+    LinkedList *linkedList = (LinkedList *) malloc( sizeof( LinkedList ) );
+    linkedList->head = newNode( -1 );
+    linkedList->tail = newNode( -2 );
+    linkedList->head->next = linkedList->tail;
+    linkedList->head->prev = NULL;
+    linkedList->tail->prev = linkedList->head;
+    linkedList->tail->next = NULL;
+    return linkedList;
 }
 
 void delete( LinkedList *list ) {
