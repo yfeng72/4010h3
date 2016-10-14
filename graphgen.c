@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include "linkedList.h"
 
+
 int main( int argc, char **argv ) {
-    printf( "test" );
+    printf( "testing" );
     return 0;
 }
