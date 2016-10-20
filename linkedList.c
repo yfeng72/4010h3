@@ -5,17 +5,17 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
-Node *newNode( int value ) {
+Node *newNode( GraphNode *graphNode ) {
     Node *newNode = (Node *) malloc( sizeof( Node ) );
-    newNode->value = value;
+    newNode->node = graphNode;
     newNode->next = NULL;
     newNode->prev = NULL;
     return newNode;
 }
 
-void append( LinkedList *list, int value ) {
+void append( LinkedList *list, GraphNode *graphNode ) {
     //insert at the end
-    Node *inNode = newNode( value );
+    Node *inNode = newNode( graphNode );
     Node *last = list->tail->prev;
     last->next = inNode;
     inNode->prev = last;
@@ -23,20 +23,10 @@ void append( LinkedList *list, int value ) {
     list->tail->prev = inNode;
 }
 
-int removeFirst( LinkedList *list ) {
-    Node *firstNode = list->head->next;
-    if ( firstNode == list->tail ) return -1;
-    firstNode->next->prev = list->head;
-    list->head->next = firstNode->next;
-    int value = firstNode->value;
-    free( firstNode );
-    return value;
-}
-
 LinkedList *newList() {
     LinkedList *linkedList = (LinkedList *) malloc( sizeof( LinkedList ) );
-    linkedList->head = newNode( -1 );
-    linkedList->tail = newNode( -2 );
+    linkedList->head = newNode( NULL );
+    linkedList->tail = newNode( NULL );
     linkedList->head->next = linkedList->tail;
     linkedList->head->prev = NULL;
     linkedList->tail->prev = linkedList->head;
@@ -44,7 +34,7 @@ LinkedList *newList() {
     return linkedList;
 }
 
-void delete( LinkedList *list ) {
+void deleteList( LinkedList *list ) {
     Node *thisNode = list->head;
     while ( thisNode != NULL ) {
         Node *tmp = thisNode->next;
@@ -52,6 +42,34 @@ void delete( LinkedList *list ) {
         thisNode = tmp;
     }
     free( list );
+}
+
+GraphNode *newGraphNode( int value ) {
+    GraphNode *newNode = (GraphNode *) malloc( sizeof( GraphNode ) );
+    newNode->value = value;
+    newNode->neighbors = newList();
+    return newNode;
+}
+
+int hasNeighbor( GraphNode *node, int value ) {
+    if ( node->value == value ) return 1;
+    for ( Node *cur = node->neighbors->head->next; cur != node->neighbors->tail; cur = cur->next ) {
+        if ( cur->node->value == value ) return 1;
+    }
+    return 0;
+}
+
+void link( GraphNode *node1, GraphNode *node2 ) {
+    if ( node1 == node2 ) return;
+    if ( !hasNeighbor( node1, node2->value ) && !hasNeighbor( node2, node1->value ) ) {
+        append( node1->neighbors, node2 );
+        append( node2->neighbors, node1 );
+    }
+}
+
+void delete( GraphNode *graphNode ) {
+    deleteList( graphNode->neighbors );
+    free( graphNode );
 }
 
 #endif

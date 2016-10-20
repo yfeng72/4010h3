@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "linkedList.h"
 
 /**
@@ -66,16 +67,15 @@ LinkedList* *createNetwork(int numNodes) {
  */
 int main(int argc, char **argv) {
 	int i;
-    printf( "testing\n" );
-    LinkedList* network = *createNetwork(3);
+	printf("testing\n");
+	LinkedList *network = *createNetwork(3);
 
-    for(i = 0; i < 3; i++) {
-    	printf("%d\n", getDegree(&network[i]));
-    }
+	for (i = 0; i < 3; i++) {
+		printf("%d\n", getDegree(&network[i]));
+	}
 
 
-    //for(i = 0; i < 3; i++) {
-    //    	delete(network[i]);
-    //}
-    return 0;
+	//for(i = 0; i < 3; i++) {
+	//    	delete(network[i]);
+	//}
 }
