@@ -64,6 +64,12 @@ Node *newNode( GraphNode *node );
 GraphNode *newGraphNode( int value );
 
 /**
+ * Returns a graphNode with the given value
+ * @param list, value: list to search, value searched for
+ */
+GraphNode *find( LinkedList *list, int value );
+
+/**
  * Connects two graph nodes if they are not connected already
  * @param node1, node2 : graph nodes to be connected
  */

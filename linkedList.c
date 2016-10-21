@@ -51,6 +51,14 @@ GraphNode *newGraphNode( int value ) {
     return newNode;
 }
 
+GraphNode *find( LinkedList *list, int value ) {
+	Node *found = list->head->next;
+	while ( found->node->value != value ) {
+		found = found->next;
+	}
+	return found->node;
+}
+
 int hasNeighbor( GraphNode *node, int value ) {
     if ( node->value == value ) return 1;
     for ( Node *cur = node->neighbors->head->next; cur != node->neighbors->tail; cur = cur->next ) {
