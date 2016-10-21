@@ -5,7 +5,7 @@
 /**
  * Instantiates and builds the network
  */
-LinkedList **createNetwork( int numNodes );
+//LinkedList **createNetwork( int numNodes );
 
 /**
  * Returns the number of connections a node has.
@@ -13,69 +13,69 @@ LinkedList **createNetwork( int numNodes );
 int getDegree( LinkedList *connections );
 
 /**
+ * Return the sum of all degree nodes.
+ */
+int degreeSum( LinkedList* network, int numNodes);
+
+/**
  * Save the network to a .csv file
  */
-void storeNetwork( char filename[] );
+//void storeNetwork( char filename[] );
 
 /**
  * Produces a histogram based on network size formatted as:
  * "Node ID, connection1, connection2, ..."
  */
-void generateHistogram();
+//void generateHistogram();
 
 int getDegree( LinkedList *connections ) {
     int counter = 0;
-    Node *current = connections->head;
+    Node* current = connections->head->next;
 
-    while ( current != NULL) {
-        if ( current->value >= 0 ) {
-            counter++;
-        }
-        current = current->next;
-
+    while ( current->node != NULL) {
+    	counter++;
+    	current = current->next;
     }
-
     return counter;
 }
 
-void connectNodes( LinkedList *network[], int node1, int node2 ) {
-    append( network[node1], node2 );
-    append( network[node2], node1 );
-
-    return;
+int degreeSum( LinkedList* network, int numNodes) {
+	int i;
+	int total = 0;
+	for(i = 0; i < numNodes; i++) {
+		total += getDegree(find(network, i)->neighbors);
+	}
+	return total;
 }
 
-LinkedList **createNetwork( int numNodes ) {
-    LinkedList *network[numNodes];
-    int i;
 
-    for ( i = 0; i < numNodes; i++ ) {
-        network[i] = newList();
-    }
+LinkedList* createNetwork( int numNodes ) {
+	int i;
+	LinkedList* network = newList();
 
-    //Fully connect 3 nodes, then begin algorithm
-    connectNodes( network, 0, 1 );
-    connectNodes( network, 0, 2 );
-    connectNodes( network, 1, 2 );
+	//Create the LinkedList describing the network; fill with nodes
+	for(i = 0; i < numNodes; i++) {
+		GraphNode* node = newGraphNode(i);
+		append(network, node);
+	}
 
-    return network;
+	//Set up base case for generating the topology: 3 fully connected nodes
+	link(find(network, 0), find(network, 1));
+	link(find(network, 0), find(network, 2));
+	link(find(network, 1), find(network, 2));
+
+
+
+	return network;
 }
 
 /**
- * Currently working on having createNetwork return a network
- * as a list of LinkedLists.
+ * Checked that degreeSum works properly; should output 6
  */
 int main( int argc, char **argv ) {
-    int i;
     printf( "testing\n" );
-    LinkedList *network = *createNetwork( 3 );
+    LinkedList* network = createNetwork(5);
+    printf("%d\n", degreeSum(network, 5));
+    deleteList(network);
 
-    for ( i = 0; i < 3; i++ ) {
-        printf( "%d\n", getDegree( &network[i] ));
-    }
-
-
-    //for(i = 0; i < 3; i++) {
-    //    	delete(network[i]);
-    //}
 }
