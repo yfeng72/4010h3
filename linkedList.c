@@ -35,6 +35,7 @@ LinkedList *newList() {
 }
 
 void deleteList( LinkedList *list ) {
+    if ( !list ) return;
     Node *thisNode = list->head;
     while ( thisNode != NULL ) {
         Node *tmp = thisNode->next;
@@ -48,6 +49,7 @@ GraphNode *newGraphNode( int value ) {
     GraphNode *newNode = (GraphNode *) malloc( sizeof( GraphNode ) );
     newNode->value = value;
     newNode->neighbors = newList();
+    newNode->marked = 0;
     return newNode;
 }
 
@@ -76,7 +78,7 @@ void link( GraphNode *node1, GraphNode *node2 ) {
 }
 
 void delete( GraphNode *graphNode ) {
-    deleteList( graphNode->neighbors );
+    if ( graphNode->neighbors ) deleteList( graphNode->neighbors );
     free( graphNode );
 }
 
