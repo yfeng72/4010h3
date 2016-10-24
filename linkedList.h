@@ -20,6 +20,7 @@ typedef struct linkedList_t {
 
 typedef struct graphNode_t {
     int value;
+    int marked;
     LinkedList *neighbors;
 } GraphNode;
 
