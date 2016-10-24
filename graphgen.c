@@ -19,6 +19,16 @@ int getDegree( LinkedList *connections );
 int degreeSum( LinkedList* network, int numNodes);
 
 /**
+ * Return the value of the highest degree in the network
+ */
+int maxDegree(LinkedList* network, int numNodes);
+
+/**
+ * Return the number of nodes in the network with the given degree
+ */
+int numWithDegree(LinkedList* network, int numNodes, int degree);
+
+/**
  * Updates the probability of a node connection as nodes are added
  */
 double updateProbabilities(LinkedList* network, int numNodes, int node);
@@ -50,6 +60,28 @@ int degreeSum( LinkedList* network, int numNodes) {
 	int total = 0;
 	for(i = 0; i < numNodes; i++) {
 		total += getDegree(find(network, i)->neighbors);
+	}
+	return total;
+}
+
+int maxDegree(LinkedList* network, int numNodes) {
+	int i;
+	int highest = 0;
+	for (i = 0; i < numNodes; i++) {
+		if(highest < getDegree(find(network, i)->neighbors)) {
+			highest = getDegree(find(network, i)->neighbors);
+		}
+	}
+	return highest;
+}
+
+int numWithDegree(LinkedList* network, int numNodes, int degree) {
+	int i;
+	int total = 0;
+	for(i = 0; i < numNodes; i++) {
+		if(degree == getDegree(find(network, i)->neighbors)) {
+			total++;
+		}
 	}
 	return total;
 }
@@ -120,7 +152,26 @@ LinkedList* createNetwork( int numNodes ) {
 }
 
 void generateHistogram(LinkedList* network, int numNodes) {
+	int i;
+	int j;
+	int count;
+	int range = maxDegree(network, numNodes);
+	FILE *output;
+	Node* current;
 
+	output = fopen("histogram.csv", "w");
+	for(i = 1; i <= range; i++) {
+		fprintf(output, "%d, ", i);
+		fprintf(output, "%d", numWithDegree(network, numNodes, i));
+		count = 0;
+		for(j = 0; j < numNodes; j++) {
+			if(getDegree(find(network, j)->neighbors) == i) {
+				fprintf(output, ", %d", j);
+			}
+		}
+		fprintf(output, "\n");
+	}
+	fclose(output);
 }
 
 void storeNetwork(char filename[], LinkedList* network, int numNodes) {
@@ -154,10 +205,11 @@ void storeNetwork(char filename[], LinkedList* network, int numNodes) {
 int main( int argc, char **argv ) {
 	int i;
     printf( "testing\n" );
-    LinkedList* network = createNetwork(100);
-    for(i = 0; i < 100; i++){
+    LinkedList* network = createNetwork(200);
+    for(i = 0; i < 200; i++){
     	printf("%d, %d\n", i, getDegree(find(network, i)->neighbors));
     }
-    storeNetwork("hello", network, 100);
+    storeNetwork("hello", network, 200);
+    generateHistogram(network, 200);
     deleteList(network);
 }
