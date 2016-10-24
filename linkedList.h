@@ -40,11 +40,6 @@ static inline int isEmpty( LinkedList *list ) { return list->head->next == list-
 LinkedList *newList();
 
 /**
- * Destructor for a Linked List, frees all the Entity Nodes and the list itself
- */
-void deleteNode( GraphNode *node );
-
-/**
  *
  * @param node : the current node
  * @param val : the neighbor node ID

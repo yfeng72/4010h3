@@ -16,27 +16,27 @@ int getDegree( LinkedList *connections );
 /**
  * Return the sum of all degree nodes.
  */
-int degreeSum( LinkedList* network, int numNodes);
+int degreeSum( LinkedList *network, int numNodes );
 
 /**
  * Return the value of the highest degree in the network
  */
-int maxDegree(LinkedList* network, int numNodes);
+int maxDegree( LinkedList *network, int numNodes );
 
 /**
  * Return the number of nodes in the network with the given degree
  */
-int numWithDegree(LinkedList* network, int numNodes, int degree);
+int numWithDegree( LinkedList *network, int numNodes, int degree );
 
 /**
  * Updates the probability of a node connection as nodes are added
  */
-double updateProbabilities(LinkedList* network, int numNodes, int node);
+double updateProbabilities( LinkedList *network, int numNodes, int node );
 
 /**
  * Save the network to a .csv file
  */
-void storeNetwork(char filename[], LinkedList* network, int numNodes);
+void storeNetwork( char filename[], LinkedList *network, int numNodes );
 
 /**
  * Produces a histogram based on network size formatted as:
@@ -46,170 +46,170 @@ void generateHistogram();
 
 int getDegree( LinkedList *connections ) {
     int counter = 0;
-    Node* current = connections->head->next;
+    Node *current = connections->head->next;
 
-    while ( current->node != NULL) {
-    	counter++;
-    	current = current->next;
+    while ( current->node != NULL ) {
+        counter++;
+        current = current->next;
     }
     return counter;
 }
 
-int degreeSum( LinkedList* network, int numNodes) {
-	int i;
-	int total = 0;
-	for(i = 0; i < numNodes; i++) {
-		total += getDegree(find(network, i)->neighbors);
-	}
-	return total;
+int degreeSum( LinkedList *network, int numNodes ) {
+    int i;
+    int total = 0;
+    for ( i = 0; i < numNodes; i++ ) {
+        total += getDegree( find( network, i )->neighbors );
+    }
+    return total;
 }
 
-int maxDegree(LinkedList* network, int numNodes) {
-	int i;
-	int highest = 0;
-	for (i = 0; i < numNodes; i++) {
-		if(highest < getDegree(find(network, i)->neighbors)) {
-			highest = getDegree(find(network, i)->neighbors);
-		}
-	}
-	return highest;
+int maxDegree( LinkedList *network, int numNodes ) {
+    int i;
+    int highest = 0;
+    for ( i = 0; i < numNodes; i++ ) {
+        if ( highest < getDegree( find( network, i )->neighbors )) {
+            highest = getDegree( find( network, i )->neighbors );
+        }
+    }
+    return highest;
 }
 
-int numWithDegree(LinkedList* network, int numNodes, int degree) {
-	int i;
-	int total = 0;
-	for(i = 0; i < numNodes; i++) {
-		if(degree == getDegree(find(network, i)->neighbors)) {
-			total++;
-		}
-	}
-	return total;
+int numWithDegree( LinkedList *network, int numNodes, int degree ) {
+    int i;
+    int total = 0;
+    for ( i = 0; i < numNodes; i++ ) {
+        if ( degree == getDegree( find( network, i )->neighbors )) {
+            total++;
+        }
+    }
+    return total;
 }
 
-double updateProbabilities(LinkedList* network, int numNodes, int node) {
-	double degree = getDegree(find(network, node)->neighbors);
-	double allDegrees = degreeSum(network, numNodes);
-	return degree / allDegrees;
+double updateProbabilities( LinkedList *network, int numNodes, int node ) {
+    double degree = getDegree( find( network, node )->neighbors );
+    double allDegrees = degreeSum( network, numNodes );
+    return degree / allDegrees;
 }
 
 
-LinkedList* createNetwork( int numNodes ) {
-	int i;
-	int connect = 0;
-	int next = 3;
-	srand(time(NULL));
-	double chance;
-	double probability[numNodes];
-	double percent[numNodes];
-	LinkedList* network = newList();
+LinkedList *createNetwork( int numNodes ) {
+    int i;
+    int connect = 0;
+    int next = 3;
+    srand( time(NULL));
+    double chance;
+    double probability[numNodes];
+    double percent[numNodes];
+    LinkedList *network = newList();
 
-	//Create the LinkedList describing the network; fill with nodes
-	for(i = 0; i < numNodes; i++) {
-		GraphNode* node = newGraphNode(i);
-		append(network, node);
-	}
+    //Create the LinkedList describing the network; fill with nodes
+    for ( i = 0; i < numNodes; i++ ) {
+        GraphNode *node = newGraphNode( i );
+        append( network, node );
+    }
 
-	//Set up base case for generating the topology: 3 fully connected nodes
-	link(find(network, 0), find(network, 1));
-	link(find(network, 0), find(network, 2));
-	link(find(network, 1), find(network, 2));
+    //Set up base case for generating the topology: 3 fully connected nodes
+    link( find( network, 0 ), find( network, 1 ));
+    link( find( network, 0 ), find( network, 2 ));
+    link( find( network, 1 ), find( network, 2 ));
 
-	//Initialize arrays
-	for(i = 0; i < numNodes; i++) {
-		probability[i] = 0.0;
-		percent[i] = 0.0;
-	}
-
-
-	//Algorithmically connect new nodes until network is complete
-	while(next < numNodes) {
-		connect = 0;
-		chance = rand() / (RAND_MAX + 1.0);
-		for(i = 0; i < numNodes; i++) {
-			probability[i] = updateProbabilities(network, numNodes, i);
-			if(i == 0) {
-				percent[i] = 0.0;
-			} else if(probability[i] == 0){
-				percent[i] = 1.0;
-			} else {
-				percent[i] = percent[i - 1] + probability[i];
-			}
-		}
-
-		for(i = 0; i < numNodes; i++) {
-			if(percent[i] == 1.0){
-				break;
-			} else if(chance > percent[i + 1]) {
-				connect = i;
-			}
-		}
-		link(find(network, next), find(network, connect));
-		next++;
-	}
+    //Initialize arrays
+    for ( i = 0; i < numNodes; i++ ) {
+        probability[i] = 0.0;
+        percent[i] = 0.0;
+    }
 
 
-	return network;
+    //Algorithmically connect new nodes until network is complete
+    while ( next < numNodes ) {
+        connect = 0;
+        chance = rand() / ( RAND_MAX + 1.0 );
+        for ( i = 0; i < numNodes; i++ ) {
+            probability[i] = updateProbabilities( network, numNodes, i );
+            if ( i == 0 ) {
+                percent[i] = 0.0;
+            } else if ( probability[i] == 0 ) {
+                percent[i] = 1.0;
+            } else {
+                percent[i] = percent[i - 1] + probability[i];
+            }
+        }
+
+        for ( i = 0; i < numNodes; i++ ) {
+            if ( percent[i] == 1.0 ) {
+                break;
+            } else if ( chance > percent[i + 1] ) {
+                connect = i;
+            }
+        }
+        link( find( network, next ), find( network, connect ));
+        next++;
+    }
+
+
+    return network;
 }
 
-void generateHistogram(LinkedList* network, int numNodes) {
-	int i;
-	int j;
-	int count;
-	int range = maxDegree(network, numNodes);
-	FILE *output;
-	Node* current;
+void generateHistogram( LinkedList *network, int numNodes ) {
+    int i;
+    int j;
+    int count;
+    int range = maxDegree( network, numNodes );
+    FILE *output;
+    Node *current;
 
-	output = fopen("histogram.csv", "w");
-	for(i = 1; i <= range; i++) {
-		fprintf(output, "%d, ", i);
-		fprintf(output, "%d", numWithDegree(network, numNodes, i));
-		count = 0;
-		for(j = 0; j < numNodes; j++) {
-			if(getDegree(find(network, j)->neighbors) == i) {
-				fprintf(output, ", %d", j);
-			}
-		}
-		fprintf(output, "\n");
-	}
-	fclose(output);
+    output = fopen( "histogram.csv", "w" );
+    for ( i = 1; i <= range; i++ ) {
+        fprintf( output, "%d, ", i );
+        fprintf( output, "%d", numWithDegree( network, numNodes, i ));
+        count = 0;
+        for ( j = 0; j < numNodes; j++ ) {
+            if ( getDegree( find( network, j )->neighbors ) == i ) {
+                fprintf( output, ", %d", j );
+            }
+        }
+        fprintf( output, "\n" );
+    }
+    fclose( output );
 }
 
-void storeNetwork(char filename[], LinkedList* network, int numNodes) {
-	int i;
-	FILE *output;
-	char name[64];
-	Node* current;
+void storeNetwork( char filename[], LinkedList *network, int numNodes ) {
+    int i;
+    FILE *output;
+    char name[64];
+    Node *current;
 
-	strcpy(name, filename);
-	strcat(name, ".csv");
-	output = fopen(name, "w");
+    strcpy( name, filename );
+    strcat( name, ".csv" );
+    output = fopen( name, "w" );
 
-	for(i = 0; i < numNodes; i++) {
-		current = find(network, i)->neighbors->head->next;
-		fprintf(output, "%d", i);
+    for ( i = 0; i < numNodes; i++ ) {
+        current = find( network, i )->neighbors->head->next;
+        fprintf( output, "%d", i );
 
-		while ( current->node != NULL) {
-	    	fprintf(output, ", %d", current->node->value);
-	    	current = current->next;
-		}
-		fprintf(output, "\n");
+        while ( current->node != NULL ) {
+            fprintf( output, ", %d", current->node->value );
+            current = current->next;
+        }
+        fprintf( output, "\n" );
 
-	}
+    }
 
-	fclose(output);
+    fclose( output );
 }
 
 /**
  * Checked that degreeSum works properly; should output 6
  */
 int main( int argc, char **argv ) {
-	int i;
+    int i;
     printf( "testing\n" );
-    LinkedList* network = createNetwork(200);
-    for(i = 0; i < 200; i++){
-    	printf("%d, %d\n", i, getDegree(find(network, i)->neighbors));
+    LinkedList *network = createNetwork( 200 );
+    for ( i = 0; i < 200; i++ ) {
+        printf( "%d, %d\n", i, getDegree( find( network, i )->neighbors ));
     }
-    storeNetwork("hello", network, 200);
-    generateHistogram(network, 200);
-    deleteList(network);
+    storeNetwork( "hello", network, 200 );
+    generateHistogram( network, 200 );
+    deleteList( network );
 }

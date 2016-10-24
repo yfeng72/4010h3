@@ -36,12 +36,20 @@ LinkedList *newList() {
 
 void deleteList( LinkedList *list ) {
     if ( !list ) return;
-    Node *thisNode = list->head;
-    while ( thisNode != NULL ) {
+    if ( !list->head || !list->tail ) {
+        free( list );
+        return;
+    }
+    Node *thisNode = list->head->next;
+    while ( thisNode != list->tail ) {
         Node *tmp = thisNode->next;
         free( thisNode );
         thisNode = tmp;
     }
+    free( list->head );
+    free( list->tail );
+    list->head = NULL;
+    list->tail = NULL;
     free( list );
 }
 
@@ -78,7 +86,7 @@ void link( GraphNode *node1, GraphNode *node2 ) {
 }
 
 void delete( GraphNode *graphNode ) {
-    if ( graphNode->neighbors ) deleteList( graphNode->neighbors );
+    if ( !graphNode ) return;
     free( graphNode );
 }
 
