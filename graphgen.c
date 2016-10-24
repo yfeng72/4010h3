@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "linkedList.h"
 
 /**
@@ -25,13 +26,13 @@ double updateProbabilities(LinkedList* network, int numNodes, int node);
 /**
  * Save the network to a .csv file
  */
-//void storeNetwork( char filename[] );
+void storeNetwork(char filename[], LinkedList* network, int numNodes);
 
 /**
  * Produces a histogram based on network size formatted as:
  * "Node ID, connection1, connection2, ..."
  */
-//void generateHistogram();
+void generateHistogram();
 
 int getDegree( LinkedList *connections ) {
     int counter = 0;
@@ -118,6 +119,35 @@ LinkedList* createNetwork( int numNodes ) {
 	return network;
 }
 
+void generateHistogram(LinkedList* network, int numNodes) {
+
+}
+
+void storeNetwork(char filename[], LinkedList* network, int numNodes) {
+	int i;
+	FILE *output;
+	char name[64];
+	Node* current;
+
+	strcpy(name, filename);
+	strcat(name, ".csv");
+	output = fopen(name, "w");
+
+	for(i = 0; i < numNodes; i++) {
+		current = find(network, i)->neighbors->head->next;
+		fprintf(output, "%d", i);
+
+		while ( current->node != NULL) {
+	    	fprintf(output, ", %d", current->node->value);
+	    	current = current->next;
+		}
+		fprintf(output, "\n");
+
+	}
+
+	fclose(output);
+}
+
 /**
  * Checked that degreeSum works properly; should output 6
  */
@@ -128,5 +158,6 @@ int main( int argc, char **argv ) {
     for(i = 0; i < 100; i++){
     	printf("%d, %d\n", i, getDegree(find(network, i)->neighbors));
     }
+    storeNetwork("hello", network, 100);
     deleteList(network);
 }
