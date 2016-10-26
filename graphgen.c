@@ -100,6 +100,7 @@ LinkedList *createNetwork( int numNodes ) {
     int next = 3;
     srand((unsigned int) time(NULL));
     double chance;
+    double prev;
     double probability[numNodes];
     double percent[numNodes];
     LinkedList *network = newList();
@@ -126,26 +127,18 @@ LinkedList *createNetwork( int numNodes ) {
     while ( next < numNodes ) {
         printf( "Connecting node %d\n", next );
         connect = 0;
-        chance = rand() / ( RAND_MAX + 1.0 );
-        for ( i = 0; i < numNodes; i++ ) {
-            probability[i] = updateProbabilities( network, numNodes, i );
-            if ( i == 0 ) {
-                percent[i] = 0.0;
-            } else if ( probability[i] == 0 ) {
-                percent[i] = 1.0;
-            } else {
-                percent[i] = percent[i - 1] + probability[i];
-            }
+        prev = 0;
+        chance = rand() / (RAND_MAX + 1.0);
+        for(i = 0; i < numNodes; i++) {
+        	if((chance >= prev) &&
+        		(chance < (updateProbabilities(network, numNodes, i) + prev))) {
+        		connect = i;
+        		break;
+        	} else {
+        		prev += updateProbabilities(network, numNodes, i);
+        	}
         }
-
-        for ( i = 0; i < numNodes; i++ ) {
-            if ( percent[i] == 1.0 ) {
-                break;
-            } else if ( chance > percent[i + 1] ) {
-                connect = i;
-            }
-        }
-        link( find( network, next ), find( network, connect ));
+        link(find(network, next), find(network, connect));
         next++;
     }
 
@@ -159,9 +152,10 @@ void generateHistogram( LinkedList *network, int numNodes, char *filename ) {
     int count;
     int range = maxDegree( network, numNodes );
     FILE *output;
-    Node *current;
-
-    output = fopen( filename, "w" );
+    char name[64];
+    strcpy(name, filename);
+    strcat(name, ".csv");
+    output = fopen( name, "w" );
     for ( i = 1; i <= range; i++ ) {
         fprintf( output, "%d,", i );
         fprintf( output, "%d", numWithDegree( network, numNodes, i ));
@@ -211,7 +205,6 @@ int main( int argc, char **argv ) {
         return 1;
     }
     int histogram = argc == 5 ? 1 : 0;
-    int i;
     printf( "Generating...\n" );
     int numNodes = atoi( argv[1] );
     LinkedList *network = createNetwork( numNodes );
