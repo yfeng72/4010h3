@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "linkedList.h"
 
 /**
@@ -42,13 +43,13 @@ void storeNetwork( char filename[], LinkedList *network, int numNodes );
  * Produces a histogram based on network size formatted as:
  * "Node ID, connection1, connection2, ..."
  */
-void generateHistogram();
+void generateHistogram( LinkedList *network, int numNodes, char *filename );
 
 int getDegree( LinkedList *connections ) {
     int counter = 0;
     Node *current = connections->head->next;
 
-    while ( current->node != NULL ) {
+    while ( current->node != NULL) {
         counter++;
         current = current->next;
     }
@@ -97,7 +98,7 @@ LinkedList *createNetwork( int numNodes ) {
     int i;
     int connect = 0;
     int next = 3;
-    srand( time(NULL));
+    srand((unsigned int) time(NULL));
     double chance;
     double probability[numNodes];
     double percent[numNodes];
@@ -123,6 +124,7 @@ LinkedList *createNetwork( int numNodes ) {
 
     //Algorithmically connect new nodes until network is complete
     while ( next < numNodes ) {
+        printf( "Connecting node %d\n", next );
         connect = 0;
         chance = rand() / ( RAND_MAX + 1.0 );
         for ( i = 0; i < numNodes; i++ ) {
@@ -151,7 +153,7 @@ LinkedList *createNetwork( int numNodes ) {
     return network;
 }
 
-void generateHistogram( LinkedList *network, int numNodes ) {
+void generateHistogram( LinkedList *network, int numNodes, char *filename ) {
     int i;
     int j;
     int count;
@@ -159,9 +161,9 @@ void generateHistogram( LinkedList *network, int numNodes ) {
     FILE *output;
     Node *current;
 
-    output = fopen( "histogram.csv", "w" );
+    output = fopen( filename, "w" );
     for ( i = 1; i <= range; i++ ) {
-        fprintf( output, "%d, ", i );
+        fprintf( output, "%d,", i );
         fprintf( output, "%d", numWithDegree( network, numNodes, i ));
         count = 0;
         for ( j = 0; j < numNodes; j++ ) {
@@ -188,7 +190,7 @@ void storeNetwork( char filename[], LinkedList *network, int numNodes ) {
         current = find( network, i )->neighbors->head->next;
         fprintf( output, "%d", i );
 
-        while ( current->node != NULL ) {
+        while ( current->node != NULL) {
             fprintf( output, ", %d", current->node->value );
             current = current->next;
         }
@@ -203,13 +205,24 @@ void storeNetwork( char filename[], LinkedList *network, int numNodes ) {
  * Checked that degreeSum works properly; should output 6
  */
 int main( int argc, char **argv ) {
-    int i;
-    printf( "testing\n" );
-    LinkedList *network = createNetwork( 200 );
-    for ( i = 0; i < 200; i++ ) {
-        printf( "%d, %d\n", i, getDegree( find( network, i )->neighbors ));
+    //Check validity of argument count
+    if ( argc != 3 && argc != 5 ) {
+        printf( "Illegal Arguments, please check inputs\n" );
+        return 1;
     }
-    storeNetwork( "hello", network, 200 );
-    generateHistogram( network, 200 );
+    int histogram = argc == 5 ? 1 : 0;
+    int i;
+    printf( "Generating...\n" );
+    int numNodes = atoi( argv[1] );
+    LinkedList *network = createNetwork( numNodes );
+    storeNetwork( argv[2], network, numNodes );
+    printf( "\n" );
+    printf( argv[2] );
+    printf( " generated\n" );
+    if ( histogram ) {
+        generateHistogram( network, numNodes, argv[4] );
+        printf( argv[4] );
+        printf( " generated as histogram\n" );
+    }
     deleteList( network );
 }
