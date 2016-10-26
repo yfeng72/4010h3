@@ -59,7 +59,6 @@ GraphNode **parseCsv( char *filename ) {
         }
     }
     //Free memory used for parsing CSV file
-    free( csvLines );
     free( csvContents );
     return nodes;
 }

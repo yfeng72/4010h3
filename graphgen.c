@@ -177,7 +177,6 @@ void storeNetwork( char filename[], LinkedList *network, int numNodes ) {
     Node *current;
 
     strcpy( name, filename );
-    strcat( name, ".csv" );
     output = fopen( name, "w" );
 
     for ( i = 0; i < numNodes; i++ ) {
@@ -185,7 +184,7 @@ void storeNetwork( char filename[], LinkedList *network, int numNodes ) {
         fprintf( output, "%d", i );
 
         while ( current->node != NULL) {
-            fprintf( output, ", %d", current->node->value );
+            fprintf( output, ",%d", current->node->value );
             current = current->next;
         }
         fprintf( output, "\n" );
