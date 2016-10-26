@@ -154,7 +154,6 @@ void generateHistogram( LinkedList *network, int numNodes, char *filename ) {
     FILE *output;
     char name[64];
     strcpy(name, filename);
-    strcat(name, ".csv");
     output = fopen( name, "w" );
     for ( i = 1; i <= range; i++ ) {
         fprintf( output, "%d,", i );
@@ -162,7 +161,7 @@ void generateHistogram( LinkedList *network, int numNodes, char *filename ) {
         count = 0;
         for ( j = 0; j < numNodes; j++ ) {
             if ( getDegree( find( network, j )->neighbors ) == i ) {
-                fprintf( output, ", %d", j );
+                fprintf( output, ",%d", j );
             }
         }
         fprintf( output, "\n" );
